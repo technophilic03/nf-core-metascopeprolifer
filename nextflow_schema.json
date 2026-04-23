@@ -43,6 +43,32 @@
                 }
             }
         },
+        "metascope_options": {
+            "title": "MetaScope options",
+            "type": "object",
+            "fa_icon": "fas fa-bacteria",
+            "description": "Parameters required to run MetaScope taxonomic classification.",
+            "required": ["metascope_index_dir", "metascope_target", "metascope_filter"],
+            "properties": {
+                "metascope_index_dir": {
+                    "type": "string",
+                    "format": "directory-path",
+                    "exists": true,
+                    "description": "Path to the directory containing Bowtie2 indices for MetaScope.",
+                    "fa_icon": "fas fa-folder-open"
+                },
+                "metascope_target": {
+                    "type": "string",
+                    "description": "Name of the target reference index used by MetaScope.",
+                    "fa_icon": "fas fa-crosshairs"
+                },
+                "metascope_filter": {
+                    "type": "string",
+                    "description": "Name of the filter reference index used by MetaScope.",
+                    "fa_icon": "fas fa-filter"
+                }
+            }
+        },
         "reference_genome_options": {
             "title": "Reference genome options",
             "type": "object",
@@ -243,6 +269,9 @@
     "allOf": [
         {
             "$ref": "#/$defs/input_output_options"
+        },
+        {
+            "$ref": "#/$defs/metascope_options"
         },
         {
             "$ref": "#/$defs/reference_genome_options"
