@@ -19,6 +19,11 @@
                         "branch": "master",
                         "git_sha": "af27af1be706e6a2bb8fe454175b0cdf77f47b49",
                         "installed_by": ["modules"]
+                    },
+                    "trimmomatic": {
+                        "branch": "master",
+                        "git_sha": "21e4662ae927fdbc5fc04eec9bde38b0689d4954",
+                        "installed_by": ["modules"]
                     }
                 }
             },

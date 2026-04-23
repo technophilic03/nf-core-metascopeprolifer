@@ -1,40 +1,39 @@
 process METASCOPE {
 
-    tag "$sampleName"
-    cpus 8
+    tag "$meta.id"
+    label 'process_high'
 
-    publishDir "/projectsp/f_wj183_1/work/Howard/MetaScope_Nextflow/test",
-               mode: 'copy'
+    publishDir "${params.outdir}/metascope",
+               mode: params.publish_dir_mode
 
     input:
-    tuple val(sampleName), path(read1), path(read2)
+    tuple val(meta), path(reads)
 
     output:
-    path("${sampleName}*")
+    tuple val(meta), path("${meta.id}*"), emit: results
 
     script:
+    def read1 = reads[0]
+    def read2 = reads[1]
+    def prefix = task.ext.prefix ?: "${meta.id}"
     """
     set -euo pipefail
 
-    workingDir="${sampleName}_tmp_miossec"
-    mkdir -p ${workingDir}
+    workingDir="${prefix}_tmp_metascope"
+    mkdir -p \${workingDir}
 
-    indexDir="/projects/f_wj183_1/reflib/2025_reference/bowtie_indices/"
-    outDir="/projectsp/f_wj183_1/work/Howard/MetaScope_Nextflow/test"
-    tmpDir="\$PWD/${workingDir}"
+    indexDir="${params.metascope_index_dir}"
+    outDir="${params.outdir}/metascope"
+    tmpDir="\$PWD/\${workingDir}"
+    taxDB="${params.metascope_tax_db}"
 
-    taxDB=/projectsp/f_wj183_1/reflib/2025_accession_taxa/accessionTaxa.sql
+    target="${params.metascope_target}"
+    filter="${params.metascope_filter}"
 
-    target="target_reference"
-    filter="filter_reference"
+    Rscript --vanilla --max-ppsize=500000 run_MetaScope.R \\
+        ${read1} ${read2} \${indexDir} ${prefix} \${outDir} \${tmpDir} ${task.cpus} \\
+        \${target} \${filter}
 
-    module load singularity
-
-    singularity exec /projects/f_wj183_1/apps/singularity_images/R_samtools_sl1729.sif \
-    Rscript --vanilla --max-ppsize=500000 run_MetaScope.R \
-        ${read1} ${read2} ${indexDir} ${sampleName} ${outDir} ${tmpDir} ${task.cpus} \
-        ${target} ${filter}
-
-    rm -rf ${workingDir}
+    rm -rf \${workingDir}
     """
 }

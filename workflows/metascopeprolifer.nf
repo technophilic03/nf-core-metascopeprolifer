@@ -10,6 +10,7 @@ include { paramsSummaryMultiqc   } from '../subworkflows/nf-core/utils_nfcore_pi
 include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_metascopeprolifer_pipeline'
 
+include { TRIMMOMATIC            } from '../modules/nf-core/trimmomatic/main'
 include { PREPROCESS             } from '../modules/local/preprocess.nf'
 include { METASCOPE              } from '../modules/local/metascope.nf'
 /*
@@ -34,6 +35,21 @@ workflow METASCOPEPROLIFER {
     )
     ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{it[1]})
     ch_versions = ch_versions.mix(FASTQC.out.versions.first())
+
+    //
+    // MODULE: Trim reads with Trimmomatic
+    //
+    TRIMMOMATIC (
+        ch_samplesheet
+    )
+    ch_multiqc_files = ch_multiqc_files.mix(TRIMMOMATIC.out.trim_log.collect { _meta, log -> log })
+
+    //
+    // MODULE: Run MetaScope on trimmed reads
+    //
+    METASCOPE (
+        TRIMMOMATIC.out.trimmed_reads
+    )
 
     //
     // Collate and save software versions
