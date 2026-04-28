@@ -9,7 +9,7 @@ outDir         <- args[5]
 tmpDir         <- args[6]
 threads        <- args[7]
 targets        <- stringr::str_split(args[8], ",")[[1]]
-filters        <- stringr::str_split(args[9], ",")[[1]]
+filters        <- if (!is.na(args[9]) && args[9] != "NULL" && args[9] != "") stringr::str_split(args[9], ",")[[1]] else NULL
 accession_path <- args[10]
 db_path        <- args[11]
 
@@ -21,8 +21,8 @@ library(MetaScope)
 
 # Align to targets
 do_this <- function(x) stringr::str_replace_all(x, c(" " = "_"))
-targets_ <- do_this(targets) 
-filters_ <- do_this(filters)
+targets_ <- do_this(targets)
+filters_ <- if (!is.null(filters)) do_this(filters) else NULL
 
 # Identify bt2 params
 data(bt2_regular_params)
@@ -40,16 +40,18 @@ target_map <- align_target_bowtie(read1 = readPath1,
                                   quiet = FALSE)
 
 # Align to filters
-output <- paste(paste0(tmpDir, expTag), "filtered", sep = ".")
-final_map <- filter_host_bowtie(reads_bam = target_map,
-                                lib_dir = indexDir,
-                                libs = filters_,
-                                make_bam = FALSE,
-                                output = output,
-                                threads = threads,
-                                overwrite = TRUE,
-                                quiet = FALSE,
-                                bowtie2_options = bt2_params)
+if (!is.null(filters)) {
+    output <- paste(paste0(tmpDir, expTag), "filtered", sep = ".")
+    final_map <- filter_host_bowtie(reads_bam = target_map,
+                                    lib_dir = indexDir,
+                                    libs = filters_,
+                                    make_bam = FALSE,
+                                    output = output,
+                                    threads = threads,
+                                    overwrite = TRUE,
+                                    quiet = FALSE,
+                                    bowtie2_options = bt2_params)
+}
 
 # MetaScope ID
 metascope_id_path <- metascope_id(
