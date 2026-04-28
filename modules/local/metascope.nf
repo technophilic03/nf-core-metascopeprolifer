@@ -11,6 +11,8 @@ process METASCOPE {
     val index_dir
     val target
     val filter
+    val accession_path
+    val db_path
 
     output:
     tuple val(meta), path("${meta.id}*"), emit: results
@@ -30,7 +32,7 @@ process METASCOPE {
 
     Rscript --vanilla --max-ppsize=500000 run_MetaScope.R \\
         ${read1} ${read2} ${index_dir} ${prefix} \${outDir} \${tmpDir} ${task.cpus} \\
-        ${target} ${filter}
+        ${target} ${filter} ${accession_path} ${db_path}
 
     rm -rf \${workingDir}
     """

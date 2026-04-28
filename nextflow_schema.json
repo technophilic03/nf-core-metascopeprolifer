@@ -48,7 +48,7 @@
             "type": "object",
             "fa_icon": "fas fa-bacteria",
             "description": "Parameters required to run MetaScope taxonomic classification.",
-            "required": ["metascope_index_dir", "metascope_target", "metascope_filter"],
+            "required": ["metascope_index_dir", "metascope_target", "metascope_filter", "metascope_accession_path", "metascope_db_path"],
             "properties": {
                 "metascope_index_dir": {
                     "type": "string",
@@ -66,6 +66,20 @@
                     "type": "string",
                     "description": "Name of the filter reference index used by MetaScope.",
                     "fa_icon": "fas fa-filter"
+                },
+                "metascope_accession_path": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "description": "Path to the accessionTaxa.sql database used by MetaScope for taxonomic ID.",
+                    "fa_icon": "fas fa-database"
+                },
+                "metascope_db_path": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "description": "Path to the BLAST database used by metascope_blast for secondary classification.",
+                    "fa_icon": "fas fa-database"
                 }
             }
         },

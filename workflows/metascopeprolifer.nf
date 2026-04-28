@@ -46,15 +46,19 @@ workflow METASCOPEPROLIFER {
     //
     // MODULE: Run MetaScope on trimmed reads
     //
-    ch_metascope_index_dir = channel.value(params.metascope_index_dir)
-    ch_metascope_target    = channel.value(params.metascope_target)
-    ch_metascope_filter    = channel.value(params.metascope_filter)
+    ch_metascope_index_dir    = channel.value(params.metascope_index_dir)
+    ch_metascope_target       = channel.value(params.metascope_target)
+    ch_metascope_filter       = channel.value(params.metascope_filter)
+    ch_metascope_accession    = channel.value(params.metascope_accession_path)
+    ch_metascope_db           = channel.value(params.metascope_db_path)
 
     METASCOPE (
         TRIMMOMATIC.out.trimmed_reads,
         ch_metascope_index_dir,
         ch_metascope_target,
-        ch_metascope_filter
+        ch_metascope_filter,
+        ch_metascope_accession,
+        ch_metascope_db
     )
 
     //

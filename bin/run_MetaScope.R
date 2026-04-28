@@ -1,15 +1,17 @@
 # Take in arguments from bash script
 args <- commandArgs(trailingOnly = TRUE)
 
-readPath1 <- args[1]
-readPath2 <- args[2]
-indexDir <- args[3]
-expTag <- args[4]
-outDir <- args[5]
-tmpDir <- args[6]
-threads <- args[7]
-targets <- stringr::str_split(args[8], ",")[[1]]
-filters <- stringr::str_split(args[9], ",")[[1]]
+readPath1      <- args[1]
+readPath2      <- args[2]
+indexDir       <- args[3]
+expTag         <- args[4]
+outDir         <- args[5]
+tmpDir         <- args[6]
+threads        <- args[7]
+targets        <- stringr::str_split(args[8], ",")[[1]]
+filters        <- stringr::str_split(args[9], ",")[[1]]
+accession_path <- args[10]
+db_path        <- args[11]
 
 # Time this!
 now <- Sys.time()
@@ -50,11 +52,34 @@ final_map <- filter_host_bowtie(reads_bam = target_map,
                                 bowtie2_options = bt2_params)
 
 # MetaScope ID
-
-metascope_id(final_map, input_type = "csv.gz", aligner = "bowtie2",
-             accession_path = file.path(loc, "indices", "accessionTaxa.sql"),
-             num_species_plot = 15,
+metascope_id_path <- metascope_id(
+             target_map, input_type = "bam", aligner = "bowtie2",
+             accession_path  = accession_path,
+             db = "ncbi",
+             priors_df = NULL,
+             num_species_plot = 0,
              quiet = FALSE,
-             out_dir = outDir)
+             out_dir = outDir,
+             update_bam = TRUE,
+             tmp_dir = tmpDir, 
+             force_calls = TRUE)
+
+metascope_blast(metascope_id_path, 
+                bam_file_path = list.files(tmpDir, ".updated.bam$",full.names = TRUE)[1], 
+                tmp_dir = tmpDir, 
+                out_dir = outDir, 
+                sample_name = expTag, 
+                fasta_dir = NULL,
+                num_results = 10, 
+                num_reads = 1000, 
+                hit_list = 100,
+                num_threads = 8, 
+                db_path = db_path,
+                quiet = FALSE,
+                db = "ncbi",
+                accession_path = accession_path)
+
+metascope_blast_path <- gsub("metascope_id.csv","metascope_blast.csv", metascope_id_path) 
+blast_reassignment(metascope_blast_path, species_threshold = 0.5, num_hits = 100, blast_tmp_dir = paste0(tmpDir, "/blast"), out_dir = outDir, sample_name = expTag)
 
 message(capture.output(Sys.time() - now))
