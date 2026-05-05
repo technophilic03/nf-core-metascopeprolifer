@@ -20,7 +20,7 @@ process METASCOPE {
     script:
     def read1  = reads[0]
     def read2  = reads[1]
-    def prefix = task.ext.prefix ?: "${meta.id}"
+    prefix     = task.ext.prefix ?: "${meta.id}"
     """
     set -euo pipefail
 
