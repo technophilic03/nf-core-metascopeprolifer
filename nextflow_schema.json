@@ -75,7 +75,7 @@
                 "metascope_db_path": {
                     "type": "string",
                     "format": "file-path",
-                    "description": "Path to the BLAST database used by metascope_blast for secondary classification.",
+                    "description": "BLAST `-db` value — `<folder>/<basename>` shared by the BLAST files, no extension. E.g. files `/path/to/db/nt.{nhr,nin,nsq,...}` → pass `/path/to/db/nt`.",
                     "fa_icon": "fas fa-database"
                 }
             }
