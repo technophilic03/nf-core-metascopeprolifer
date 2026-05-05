@@ -74,8 +74,7 @@
                 },
                 "metascope_db_path": {
                     "type": "string",
-                    "format": "file-path",
-                    "description": "Path to the BLAST database used by metascope_blast for secondary classification.",
+                    "description": "BLAST database prefix used by metascope_blast for secondary classification (path stem without file extension, e.g. /path/to/blastdb/nt).",
                     "fa_icon": "fas fa-database"
                 }
             }
