@@ -42,7 +42,6 @@ workflow METASCOPEPROLIFER {
         ch_samplesheet
     )
     ch_multiqc_files = ch_multiqc_files.mix(TRIMMOMATIC.out.trim_log.collect { _meta, log -> log })
-    ch_versions = ch_versions.mix(TRIMMOMATIC.out.versions_trimmomatic.first())
 
     //
     // MODULE: Run MetaScope on trimmed reads
