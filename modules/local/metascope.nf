@@ -3,6 +3,8 @@ process METASCOPE {
     tag "$meta.id"
     label 'process_high'
 
+    container 'seanlu96/metascope_16s:latest'
+
     publishDir "${params.outdir}/metascope",
                mode: params.publish_dir_mode
 
